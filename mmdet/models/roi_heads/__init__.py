@@ -7,11 +7,11 @@ from .roi_extractors import SingleRoIExtractor
 from .shared_heads import ResLayer
 from .standard_roi_head import StandardRoIHead
 
-from .oln_roi_head import OlnRoIHead
+from .oln_roi_head import OlnRoIHead, MaskScoringOlnRoIHead
 
 __all__ = [
     'BaseRoIHead', 'ResLayer', 'BBoxHead',
     'ConvFCBBoxHead', 'Shared2FCBBoxHead', 'StandardRoIHead',
     'Shared4Conv1FCBBoxHead', 'FCNMaskHead',
-    'SingleRoIExtractor', 'OlnRoIHead'
+    'SingleRoIExtractor', 'OlnRoIHead', 'MaskScoringOlnRoIHead'
 ]
