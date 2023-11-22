@@ -63,7 +63,7 @@ work_dirs/oln_box/latest.pth ${NUM_GPUS}
 python tools/test.py configs/oln_box/oln_box.py work_dirs/oln_box/latest.pth --eval bbox
 ```
 
-Similarly, OLN-Mask is available [here](). For testing, run:
+Similarly, OLN-Mask is available [here](https://drive.google.com/file/d/1_8X8getp3FK_uKrI6Dcl0Xy5c_RVgabO/view?usp=drive_link). For testing, run:
 ```
 python tools/test.py configs/oln_mask/oln_mask.py work_dirs/oln_mask/latest.pth --eval bbox segm
 ```
