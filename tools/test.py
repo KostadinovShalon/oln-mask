@@ -186,8 +186,10 @@ def main():
 
     if not distributed:
         model = MMDataParallel(model, device_ids=[0])
+        is_class_agnostic = cfg.data.test.is_class_agnostic
         outputs = single_gpu_test(model, data_loader, args.show, args.show_dir,
-                                  args.show_score_thr)
+                                  args.show_score_thr,
+                                  is_class_agnostic=is_class_agnostic)
     else:
         model = MMDistributedDataParallel(
             model.cuda(),

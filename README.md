@@ -1,54 +1,38 @@
+# OLN-Mask
 
-# Learning Open-World Object Proposals without Learning to Classify
+## Unofficial implementation of OLN-Mask from [Learning Open-World Object Proposals without Learning to Classify](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9697381)<br/>
 
-## Pytorch implementation for "Learning Open-World Object Proposals without Learning to Classify" ([RA-L and ICRA 2022](https://arxiv.org/abs/2108.06753)) <br/>
+This repository is a for of the code for [OLN](https://github.com/mcahny/object_localization_network) containing an implementation of 
+OLN-Mask, which is not included in [the original repo](https://github.com/mcahny/object_localization_network).
 
-[Dahun Kim](https://mcahny.github.io/), [Tsung-Yi Lin](https://scholar.google.com/citations?user=_BPdgV0AAAAJ), [Anelia Angelova](https://scholar.google.co.kr/citations?user=nkmDOPgAAAAJ), [In So Kweon](https://rcv.kaist.ac.kr), and [Weicheng Kuo](https://weichengkuo.github.io/).
+<img src="./images/oln_mask.png" width="500"> <img src="./images/oln_mask_2.png" width="500"> <br/>
 
-```bibtex
-@article{kim2021oln,
-  title={Learning Open-World Object Proposals without Learning to Classify},
-  author={Kim, Dahun and Lin, Tsung-Yi and Angelova, Anelia and Kweon, In So and Kuo, Weicheng},
-  journal={IEEE Robotics and Automation Letters (RA-L)},
-  year={2022}
-}
-```
+OLN-Mask contains the following new modules:
 
+ - **MaskScoringOlnRoIHead** (RoI Head). Similar to OlnRoIHead, it includes mask forward and testing methods. It also implements
+the detection score as the geometric mean of the RPN, the BBox head and the mask head. 
+ - **OlnFCNMaskHead** (Mask Head). Similar to FCNMaskHead, but it returns the features after the convolutional layers.
+ - **OlnMaskIoUHead** (Mask IoU Head). Mask scoring IoU Head, as explained in the paper. The architecture follows the same
+ as in MaskScoring, but with a convolutional network at the beginning.
 
-## Introduction
+This repo also has some modifications for better mask visualisation.
 
-Humans can recognize novel objects in this image despite having never seen them  before. “Is it possible to learn open-world (novel) object proposals?” In this paper we propose **Object Localization Network (OLN)** that learns localization cues instead of foreground vs background classification. Only trained on COCO, OLN is able to propose many novel objects (top) missed by Mask R-CNN (bottom) on an out-of-sample frame in an ego-centric video.
+## Metrics
 
-<img src="./images/epic.png" width="500"> <img src="./images/oln_overview.png" width="500"> <br/>
+OLN-Mask is trained following the original paper implementation and similar OLN-Box. Here we compare our results with the OLN-Mask results reported in the paper.
+We only present COCO train2017 (VOC categories) --> Coco val2017 (non VOC categories) results.
 
-## Cross-category generalization on COCO
-
-We train OLN on COCO VOC categories, and test on non-VOC categories. Note our AR@k evaluation does not count those proposals on the 'seen' classes into the budget (k), to avoid evaluating recall on see-class objects.
-
-|     Method     |  AUC  | AR@10 | AR@30 | AR@100 | AR@300 | AR@1000 | Download |
-|:--------------:|:-----:|:-----:|:-----:|:------:|:------:|:-------:|:--------:|
-|    OLN-Box     | 24.8  | 18.0  | 26.4  |  33.4  |  39.0  |  45.0   | [model](https://drive.google.com/uc?id=1uL6TRhpSILvWeR6DZ0x9K9VywrQXQvq9) |
+|                                      Method                                      | Box AR@10 | Box AR@30 | Box AR@100 | Box AR@300 | Mask AR@10 | Mask AR@30 | Mask AR@100 | Mask AR@300 |                                            Download                                            |
+|:--------------------------------------------------------------------------------:|:---------:|:---------:|:----------:|:----------:|:----------:|:----------:|:-----------:|:-----------:|:----------------------------------------------------------------------------------------------:|
+| OLN-Box ([paper](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9697381))  |   18.0    |   26.4    |    33.4    |    39.0    |    N/A     |    N/A     |     N/A     |     N/A     |           [model](https://drive.google.com/uc?id=1uL6TRhpSILvWeR6DZ0x9K9VywrQXQvq9)            |
+| OLN-Mask ([paper](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9697381)) |   18.3    |     -     |    33.6    |     -      |    16.9    |     -      |    27.8     |      -      |                                               -                                                |
+|                               OLN-Mask (This repo)                               |   18.2    |   26.2    |    33.7    |    38.7    |    17.2    |    23.4    |    28.6     |    31.3     | [model](https://drive.google.com/file/d/1_8X8getp3FK_uKrI6Dcl0Xy5c_RVgabO/view?usp=drive_link) |
 
 
 ## Disclaimer
 
-This repo is tested under Python 3.7, PyTorch 1.7.0, Cuda 11.0, and mmcv==1.2.5.
-
-## Installation
-
-This repo is built based on [mmdetection](https://github.com/open-mmlab/mmdetection). 
-
-You can use following commands to create conda env with related dependencies.
-```
-conda create -n oln python=3.7 -y
-conda activate oln
-conda install pytorch=1.7.0 torchvision cudatoolkit=11.0 -c pytorch -y
-pip install mmcv-full==1.2.7
-pip install -r requirements.txt
-pip install -v -e . 
-```
-Please also refer to [get_started.md](docs/get_started.md) for more details of installation.
-
+This repo is tested under Python 3.7.12, PyTorch 1.7.1, Cuda 11.7, and mmcv==1.2.7. Follow the same instructions for installation as in
+[OLN](https://github.com/mcahny/object_localization_network).
 
 ## Prepare datasets
 
@@ -69,25 +53,20 @@ object_localization_network
 
 
 ## Testing
-Our trained models are available for download [here](https://drive.google.com/uc?id=1uL6TRhpSILvWeR6DZ0x9K9VywrQXQvq9). Place it under `trained_weights/latest.pth` and run the following commands to test OLN on COCO dataset.
+OLN-Box is available [here](https://drive.google.com/uc?id=1uL6TRhpSILvWeR6DZ0x9K9VywrQXQvq9) (original source from OLN repo). To evaluate, run:
 
 ```
 # Multi-GPU distributed testing
 bash tools/dist_test_bbox.sh configs/oln_box/oln_box.py \
-trained_weights/latest.pth ${NUM_GPUS}
+work_dirs/oln_box/latest.pth ${NUM_GPUS}
 # OR
 python tools/test.py configs/oln_box/oln_box.py work_dirs/oln_box/latest.pth --eval bbox
 ```
 
-
-## Training
+Similarly, OLN-Mask is available [here](). For testing, run:
 ```
-# Multi-GPU distributed training
-bash tools/dist_train.sh configs/oln_box/oln_box.py ${NUM_GPUS}
-
+python tools/test.py configs/oln_mask/oln_mask.py work_dirs/oln_mask/latest.pth --eval bbox segm
 ```
-
 
 ## Contact
-
-If you have any questions regarding the repo, please contact Dahun Kim (mcahny01@gmail.com) or create an issue.
+Any question regarding OLN-Mask implementation, please create a new issue. For other OLN-related questions please refer to the original repo issues page. 

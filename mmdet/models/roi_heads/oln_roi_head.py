@@ -124,7 +124,6 @@ class MaskScoringOlnRoIHead(OlnRoIHead):
         super(MaskScoringOlnRoIHead, self).__init__(**kwargs)
         self.mask_iou_head = build_head(mask_iou_head)
 
-
     def simple_test(self,
                     x,
                     proposal_list,
